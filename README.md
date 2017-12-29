@@ -84,7 +84,8 @@ Existing files in the file system will be overwritten.
 
 ## Support
 
-You can submit questions, requests and bug reports to the [issues list]().
+You can submit questions, requests and bug reports to the
+[issues list](https://github.com/mattpalermo/VBA-Import-Export/issues).
 Github pull requests are also welcome.
 
 ## Authors and Attribution
