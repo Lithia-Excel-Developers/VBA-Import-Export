@@ -32,7 +32,7 @@ Private Sub CreateVBEMenu()
         Set objMenuItem = .Controls.Add(Type:=msoControlButton)
         objMenuItem.OnAction = "MakeConfigFile"
         Call MenuEvents(objMenuItem)
-        objMenuItem.Caption = "&Make Config File"
+        objMenuItem.Caption = "&Update Config File"
 
         Set objMenuItem = .Controls.Add(Type:=msoControlButton)
         objMenuItem.OnAction = "Import"
@@ -105,7 +105,3 @@ End Sub
 Public Sub btnImport_onAction(control As IRibbonControl)
     Call Import
 End Sub
-Public Sub btnXlToXML_onAction(control As IRibbonControl)
-    Call excelToXML
-End Sub
-
