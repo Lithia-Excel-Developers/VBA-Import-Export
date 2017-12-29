@@ -1,213 +1,107 @@
-# VBA IDE CodeExport
+# VBA Import & Export Add-in for MS Excel
 
-[![The MIT License](https://img.shields.io/badge/license-MIT-orange.svg?style=flat-square)](http://opensource.org/licenses/MIT)  [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square)](https://gitter.im/VBA-IDE-Code-Export)
+[![The MIT License](https://img.shields.io/badge/license-MIT-orange.svg?style=flat-square)](http://opensource.org/licenses/MIT)
 
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/spences10/VBA-IDE-Code-Export.svg)](http://isitmaintained.com/project/spences10/VBA-IDE-Code-Export "Average time to resolve an issue")  [![Percentage of issues still open](http://isitmaintained.com/badge/open/spences10/VBA-IDE-Code-Export.svg)](http://isitmaintained.com/project/spences10/VBA-IDE-Code-Export "Percentage of issues still open")
+The *VBA Import & Export Add-in* is an Add-in for *Microsoft Excel* that allows
+you to import and export VBA code to and from Excel Workbooks (`.xlsm` files)
+easily. This allows VBA code to be stored in plain text files alongside the
+`.xlsm` file. This is essential for effectively utilizing Git in a VBA project
+(or any other VCS).
 
-[![Stories in Ready](https://badge.waffle.io/spences10/VBA-IDE-Code-Export.png?label=ready&title=Ready)](https://waffle.io/spences10/VBA-IDE-Code-Export) [![Code Triagers Badge](https://www.codetriage.com/spences10/vba-ide-code-export/badges/users.svg)](https://www.codetriage.com/spences10/vba-ide-code-export)
+## Installation
 
-<!-- TOC -->
-
-- [VBA IDE CodeExport](#vba-ide-codeexport)
-  - [Intro](#intro)
-  - [Installing](#installing)
-  - [Usage](#usage)
-    - [The configuration file](#the-configuration-file)
-    - [Importing & Exporting](#importing--exporting)
-  - [Build from source](#build-from-source)
-    - [Clone the repo](#clone-the-repo)
-    - [Build the binary](#build-the-binary)
-    - [Add the code](#add-the-code)
-  - [Contributing](#contributing)
-  - [Roadmap](#roadmap)
-
-<!-- /TOC -->
-
-## Intro
-
-Export your excel VBA project source code for use with Git (or any VCS) from the
-Excel Developer ribbon, a pure VBA add-in for code export, no need to install a
-COM add-in
-
-Use this add-in so that all the associated VBA files used in a VBA project
-(`*.cls`, `*.bas`, `*.frm` files) can be effortlessly exported for use with a
-Version Control System.
-
-Got code in your `Worksheet` and `ThisWorkbook` modules? No problem! CodeExport
-takes care of those too, exporting them as `*.sht` and `*.wbk` files :+1:
-
-This is specifically for Excel, although the VBIDE extensibility can be used for
-all the MS Office suite.
-
-## Installing
-
-1. [Download](https://github.com/spences10/VBA-IDE-Code-Export/releases) the
-   add-in installer (e.g. `CodeExport_setup_1.2.3.exe`)
-2. Run the installer and follow the prompts.
-3. In Excel, Check the `Trust access to the VBA project model` check box located
-   in `Trust Centre -> Trust Centre Settings -> Macro Settings -> Trust access
-   to the VBA project model`.
+1. Download the Add-in: [VBA-Import-Export.xlam]()
+2. Add and Enable the Add-in in Excel
+3. In Excel, Check the `Trust access to the VBA project model` check box
+   located in `Trust Centre -> Trust Centre Settings -> Macro Settings ->
+   Trust access to the VBA project model`.
 
 ## Usage
 
-After installing the add-in you will have the buttons for CodeExport in the
-Excel Developer ribbon. The add-in will also create a menu in the VBA IDE (the
-VBE) called `Export for VCS`. All controls for the add-in are found in these
-menus.
+Menus for using the add-in can be found in the *Developer* tab of the *Excel
+ribbon menu* and in the menu of the *VBA IDE*. Both menus provide the same
+commands.
 
-![](img/ribbon-buttons.png)
+To get started quickly:
+1. Save your `.xlsm` file in the directory where your VBA code will go.
+2. Use the `Make Config File` command to make a `CodeExport.config.json` file in
+that same directory. This records a list of VBA files and references.
+3. Use the `Export` command to export the VBA code.
+4. Notice the VBA code present in the same directory as your `.xlsm` file.
+5. Save and close your Excel workbook.
+6. (Optional) Commit the contents of your project directory into Git or any
+   other VCS system.
 
-### The configuration file
+When you return to work on the VBA project:
+1. (Optional) Checkout a version of your project from Git or the VCS system you
+   are using.
+2. Open the Excel workbook (`.xlsm` file) in Excel.
+3. Use the `Import` command to import the VBA code from the project directory\*
+   and the references listed in the configuration file.
+4. When you're ready to save: use the `Make Config File` command to update the
+   config file; use the `Export` command to export the VBA code; then save
+   and close the Excel workbook.
 
-A file named `CodeExport.config.json` in the same directory as an Excel file
-declares what gets imported into and exported from that Excel file. The `Make
-Config File` button will create or update the configuration file automatically
-based on the current contents of the active Excel file. The configuration file
-can also be edited by hand in a text editor. This allows you to make further
-adjustments that the `Make Config File` button cannot do.
+\* Only files listed in the configuration file will be imported.
 
-The configuration file is a plain text file using the JSON file format. Here is
-an example:
+## The configuration file
 
-```JSON
-{
-    "VBAProject Name": "MyAwesomeProgram",
-    "Base Path": "src",
-    "Module Paths": {
-        "Sheet1": "Sheet1.cls",
-        "ThisWorkbook": "ThisWorkbook.cls",
-        "Module1": "Module1.bas",
-        "Class1": "my\\sub\\dir\\Class1.bas",
-        "Userform1": "C:\\my\\absolute\\path\\Userform1.frx"
-    },
-    "References": [
-		{
-			"Name": "Scripting",
-			"Description": "Microsoft Scripting Runtime",
-			"GUID": "{420B2830-E718-11CF-893D-00A0C9054228}",
-			"Major": 1,
-			"Minor": 0
-		}
-    ]
-}
-```
+The `CodeExport.config.json` file declares what gets imported to and exported
+from an Excel workbook (`.xlsm` file). The config file must be in the
+same directory as the `.xlsm` file. The config file can be edited in
+a text editor to make advanced adjustments that the `Make Config File` command
+cannot do. A comprehensive example config file can be found at [test-projects/comprehensive/CodeExport.config.json](test-projects/comprehensive/CodeExport.config.json).
 
-Another example can be found in the
-[comprehensive example project](test-projects/comprehensive).
-
-Here is what each configuration property declares:
+The config file uses the [JSON file format](https://en.wikipedia.org/wiki/JSON).
+The following list describes the configuration properties that are used by
+*VBA-Import-Export*:
 
 * `VBAProject Name` - The name of the VBAProject. Will be set on import. Must
   not contain any spaces.
-* `Module Paths` - A file system path for every module that will be imported and
-  exported by CodeExport. These may be relative or absolute paths.
+* `Module Paths` - A file system path for every VBA module that will be imported
+  and exported by CodeExport. These may be relative or absolute paths.
 * `Base Path` - A prefix to be prepended to all relative paths in
   `Module Paths`.
 * `References` - A list of reference definitions. Each reference described will
   be referenced on import and dereferenced on export.
 
-### Importing & Exporting
+## Importing & Exporting
 
-The `Import` button will:
+The `Import` command will:
 
 * Import all the modules specified in the `Module Paths` configuration property.
-  Existing modules in the Excel file will be overwritten.
+Existing modules in the Excel file will be overwritten.
 * Add all library references declared in the `References` configuration
-  property. Existing library references in the Excel file will be overwritten.
+property. Existing library references in the Excel file will be overwritten.
 * Set the VBAProject name as declared in the `VBAProject Name` configuration
-  property.
+property.
 
-The `Export` button will:
+The `Export` command will:
 
 * Export all the modules specified in the `Module Paths` configuration property.
-  Existing files in the file system will be overwritten.
+Existing files in the file system will be overwritten.
 * Dereference libraries declared in the `References` configuration property.
 
-## Build from source
+## Support
 
-### Clone the repo
+You can submit questions, requests and bug reports to the [issues list]().
+Github pull requests are also welcome.
 
-Clone the repo `git clone https://github.com/spences10/VBA-IDE-Code-Export`,
-navigate to where you have cloned the code to, there you will find the
-`src/VBA-IDE-Code-Export.package` folder. This is the 'unpacked' version of the
-VBA-IDE-Code-Export Excel `.xlsm` binary (workbook).
+## Authors and Attribution
 
-### Build the binary
+* Scott Spence - Author, his version is at
+[spences10/VBA-IDE-Code-Export](https://github.com/spences10/VBA-IDE-Code-Export)
+* Matthew Palermo - Author, maintainer of this version
+([mattpalermo/VBA-Import-Export](https://github.com/mattpalermo/VBA-Import-Export))
+* Tim Hall - Author of the library [VBA-JSON](https://github.com/VBA-tools/VBA-JSON) which is used to read and write
+the configuration file(s).
+* All the authors of the clever VBA code snippets found in forums across the
+internet which showed us how to solve some of the less documented nuances of VBA
+and Excel. I wish I had kept a list.
 
-To "repack" the binary, create an empty `.zip` file and name it
-`VBA-IDE-Code-Export`. Open the empty `.zip` file then drag and drop the
-**_contents_** of the `VBA-IDE-Code-Export.package` folder into the `.zip` file.
+## See Also
 
-> Now [I'm assuming you're using Windows] if you have the Folder Options setting
-for `Hide extensions for known file types` checked then this is the time to
-uncheck it.
-
-![](img/unhide-file-extensions.gif)
-
-Rename the file extension on the newly created `VBA-IDE-Code-Export.zip` file
-from `.zip` to `.xlsm`. Acknowledge the dialog saying `if you change the
-extension bad things might happen` and you will have "packed" the binary, ready
-to add the VBA code to.
-
-![](img/build-from-source.gif)
-
-### Add the code
-
-The VBA code and related information can be imported using an already installed
-copy of CodeExport, or it can be done manually.
-
-All the necessary configuration for CodeExport to build itself is already
-prepared in `src/CodeExport.config.json`. To perform the build:
-
-1. Make sure you have a recent release of CodeExport installed. Instructions for
-   installation can be found in the [Installing](#installing) section.
-2. Open the `VBA-IDE-Code-Export.xlsm` template binary.
-3. Use the CodeExport `Import` button to automatically import everything that is
-   required. Since two versions of CodeExport is open at once, there will be two
-   identical sets of buttons in the developer ribbon menu, and this can be
-   confusing. Only one of these sets of buttons will work. If in doubt, use the
-   menu available in the VBE, where there will only be one menu (for now).
-
-If the automated method is not possible, everything can be done manually. The
-best way to do this is to have the `VBA-IDE-Code-Export.xlsm` VBA IDE open in
-one window then the file explorer open at the `src` folder in another window.
-
-Multi select the contents of the folder **_excluding
-`VBA-IDE-Code-Export.package` and `CodeExport.config.json`_** drag and drop into
-the `VBA-IDE-Code-Export.xlsm` VBA IDE.
-
-Add in the following references:
-
-1. Microsoft Scripting Runtime
-2. Microsoft Visual Basic for Applications Extensibility 5.3
-3. Windows Script Host Object Model
-4. Microsoft Shell Controls And Automation
-
-Set the VBAProject name to `CodeExport`.
-
-Save, Debug>Compile the project then from the Immediate pane in the VBA IDE
-enter `auto_open` and hit return this should create the VBA IDE menu items,
-you're ready to move onto **usage.**
-
-![](img/add-code.gif)
-
-### Build the installer
-
-Instructions for building the installer (e.g. `CodeExport_setup_1.2.3.exe`) can
-be found at
-[doc/installer-build-instructions.md](doc/installer-build-instructions.md).
-
-## Contributing
-
-Please fork this repository and contribute back using GitHub pull requests.
-
-Any contributions, large or small, major features, bugfixes, integration tests
-and unit tests are welcomed and appreciated but will be thoroughly reviewed and
-discussed.
-
-## Roadmap
-
-- [x] Add pretty ribbon UI
-- [x] Export XL as XML
-- [ ] Import XL from XML
-- [ ] Command line interface
+* [vba-blocks](https://www.vba-blocks.com/) - A VBA package manager in
+development by Tim Hall. It will hopefully supersede this add-in.
+* [VBA-IDE-Code-Export](https://github.com/spences10/VBA-IDE-Code-Export) - Scott
+Spence's version of this add-in.
