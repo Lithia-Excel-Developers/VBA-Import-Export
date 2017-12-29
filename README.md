@@ -10,7 +10,7 @@ easily. This allows VBA code to be stored in plain text files alongside the
 
 ## Installation
 
-1. Download the Add-in: [VBA-Import-Export.xlam]()
+1. Download the Add-in: [VBA-Import-Export.xlam](https://github.com/mattpalermo/VBA-Import-Export/releases/download/v0.4.0/VBA-Import-Export.xlam) (version 0.4.0)
 2. Add and Enable the Add-in in Excel
 3. In Excel, Check the `Trust access to the VBA project model` check box
    located in `Trust Centre -> Trust Centre Settings -> Macro Settings ->
