@@ -1,7 +1,5 @@
 # VBA Import & Export Add-in for MS Excel
 
-[![The MIT License](https://img.shields.io/badge/license-MIT-orange.svg?style=flat-square)](http://opensource.org/licenses/MIT)
-
 The *VBA Import & Export Add-in* is an Add-in for *Microsoft Excel* that allows
 you to import and export VBA code to and from Excel Workbooks (`.xlsm` files)
 easily. This allows VBA code to be stored in plain text files alongside the
@@ -18,22 +16,28 @@ easily. This allows VBA code to be stored in plain text files alongside the
 
 ## Usage
 
-Menus for using the add-in can be found in the *Developer* tab of the *Excel
+The add-in can be used from *Developer* tab of the *Excel
 ribbon menu* and in the menu of the *VBA IDE*. Both menus provide the same
 commands.
 
-To get started quickly:
-1. Save your `.xlsm` file in the directory where your VBA code will go.
+### Getting started
+1. Save your `.xlsm` file into a folder.
 2. Use the `Make Config File` command to make a `CodeExport.config.json` file in
-that same directory. This records a list of VBA files and references.
-3. Use the `Export` command to export the VBA code.
-4. Notice the VBA code present in the same directory as your `.xlsm` file.
-5. Save and close your Excel workbook.
-6. (Optional) Commit the contents of your project directory into Git or any
+the same folder as the `.xlsm` file. This records a list of VBA files and
+references.
+3. Use the `Export` command to export the VBA code. Notice the VBA code present
+in the same folder as your `.xlsm` file.
+4. Save and close your Excel workbook.
+5. *(Optional)* Commit the contents of your project directory into Git or any
    other VCS system.
 
+**Important:**
+[VBA-project-template](https://github.com/mattpalermo/VBA-project-template)
+provides config files to ensure Git and text editors play nicely with your
+project files.
+
 When you return to work on the VBA project:
-1. (Optional) Checkout a version of your project from Git or the VCS system you
+1. *(Optional)* Checkout a version of your project from Git or the VCS system you
    are using.
 2. Open the Excel workbook (`.xlsm` file) in Excel.
 3. Use the `Import` command to import the VBA code from the project directory\*
@@ -46,15 +50,14 @@ When you return to work on the VBA project:
 
 ## The configuration file
 
-The `CodeExport.config.json` file declares what gets imported to and exported
-from an Excel workbook (`.xlsm` file). The config file must be in the
-same directory as the `.xlsm` file. The config file can be edited in
-a text editor to make advanced adjustments that the `Make Config File` command
-cannot do. A comprehensive example config file can be found at [test-projects/comprehensive/CodeExport.config.json](test-projects/comprehensive/CodeExport.config.json).
-
-The config file uses the [JSON file format](https://en.wikipedia.org/wiki/JSON).
-The following list describes the configuration properties that are used by
-*VBA-Import-Export*:
+The `CodeExport.config.json` file declares what gets imported and exported from
+an Excel workbook. The config file must be in the same directory as the `.xlsm`
+file. The config file can be edited in a text editor to make advanced
+adjustments that the `Make Config File` command cannot do. A comprehensive
+example config file can be found at
+[test-projects/comprehensive/CodeExport.config.json](test-projects/comprehensive/CodeExport.config.json).
+The config file uses the [JSON file format](https://en.wikipedia.org/wiki/JSON)
+and the configuration properties are:
 
 * `VBAProject Name` - The name of the VBAProject. Will be set on import. Must
   not contain any spaces.
@@ -90,15 +93,11 @@ Github pull requests are also welcome.
 
 ## Authors and Attribution
 
-* Scott Spence - Author, his version is at
-[spences10/VBA-IDE-Code-Export](https://github.com/spences10/VBA-IDE-Code-Export)
-* Matthew Palermo - Author, maintainer of this version
+* Scott Spence - Author
+([spences10/VBA-IDE-Code-Export](https://github.com/spences10/VBA-IDE-Code-Export))
+* Matthew Palermo - Author
 ([mattpalermo/VBA-Import-Export](https://github.com/mattpalermo/VBA-Import-Export))
-* Tim Hall - Author of the library [VBA-JSON](https://github.com/VBA-tools/VBA-JSON) which is used to read and write
-the configuration file(s).
-* All the authors of the clever VBA code snippets found in forums across the
-internet which showed us how to solve some of the less documented nuances of VBA
-and Excel. I wish I had kept a list.
+* Tim Hall - Author of the library [VBA-JSON](https://github.com/VBA-tools/VBA-JSON)
 
 ## See Also
 
