@@ -43,6 +43,11 @@ Private Sub CreateVBEMenu()
         objMenuItem.OnAction = "Export"
         Call MenuEvents(objMenuItem)
         objMenuItem.Caption = "&Export"
+        
+        Set objMenuItem = .Controls.Add(Type:=msoControlButton)
+        objMenuItem.OnAction = "Save"
+        Call MenuEvents(objMenuItem)
+        objMenuItem.Caption = "&Save"
 
     End With
 
@@ -69,6 +74,8 @@ Private Sub CreateXLMenu()
              OnAction:="MakeConfigFile"
         .Add Caption:="&Import", _
              OnAction:="Import"
+        .Add Caption:="&Save", _
+             OnAction:="Save"
         .Add Caption:="&Export", _
              OnAction:="Export"
     End With
@@ -100,8 +107,11 @@ Public Sub btnMakeConfig_onAction(control As IRibbonControl)
     Call MakeConfigFile
 End Sub
 Public Sub btnExport_onAction(control As IRibbonControl)
-    Call Export
+    Export
+End Sub
+Public Sub btnSave_onAction(control As IRibbonControl)
+    Save
 End Sub
 Public Sub btnImport_onAction(control As IRibbonControl)
-    Call Import
+    Import
 End Sub
