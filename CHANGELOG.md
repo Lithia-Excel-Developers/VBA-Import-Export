@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-- No changes documented yet
+- New save action: Export without removing anything from Excel document
 
 ## [0.4.0] - 2017-12-29
 

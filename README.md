@@ -9,7 +9,7 @@ easily. This allows VBA code to be stored in plain text files alongside the
 ## Installation
 
 1. Download the Add-in: [VBA-Import-Export.xlam](https://github.com/mattpalermo/VBA-Import-Export/releases/download/v0.4.0/VBA-Import-Export.xlam) (version 0.4.0)
-2. Add and Enable the Add-in in Excel
+2. Add and enable the Add-in in Excel
 3. In Excel, Check the `Trust access to the VBA project model` check box
    located in `Trust Centre -> Trust Centre Settings -> Macro Settings ->
    Trust access to the VBA project model`.
@@ -48,6 +48,15 @@ When you return to work on the VBA project:
 
 \* Only files listed in the configuration file will be imported.
 
+### Safety tips
+
+Here's some tips to avoid loosing data while using this Add-in:
+
+* Do regular backups! Use the method that you won't forget. My favourite method is to use Git. Any versioning system would also work.
+* If you make changes in the Excel document, don't edit the files in the file system before you `Export`. The inevitable `Export` will overwrite your changes.
+* If you make changes in the Excel document, don't `Import` before using `Save` or `Export`. You will just overwrite your changes with what you started with.
+* `Save` regularly to avoid making the mistake above.
+
 ## The configuration file
 
 The `CodeExport.config.json` file declares what gets imported and exported from
@@ -68,7 +77,7 @@ and the configuration properties are:
 * `References` - A list of reference definitions. Each reference described will
   be referenced on import and dereferenced on export.
 
-## Importing & Exporting
+## Importing, Saving & Exporting
 
 The `Import` command will:
 
@@ -79,10 +88,14 @@ property. Existing library references in the Excel file will be overwritten.
 * Set the VBAProject name as declared in the `VBAProject Name` configuration
 property.
 
-The `Export` command will:
+The `Save` command will:
 
 * Export all the modules specified in the `Module Paths` configuration property.
 Existing files in the file system will be overwritten.
+
+The `Export` command will:
+
+* Do the same as the `Save` command.
 * Dereference libraries declared in the `References` configuration property.
 
 ## Support
@@ -98,6 +111,7 @@ Github pull requests are also welcome.
 * Matthew Palermo - Author
 ([mattpalermo/VBA-Import-Export](https://github.com/mattpalermo/VBA-Import-Export))
 * Tim Hall - Author of the library [VBA-JSON](https://github.com/VBA-tools/VBA-JSON)
+* (Kevin Conner)[https://github.com/connerk] - Author of the Save action
 
 ## See Also
 
