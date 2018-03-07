@@ -1,0 +1,15 @@
+<customUI 
+	xmlns="http://schemas.microsoft.com/office/2006/01/customui">
+	<ribbon >
+		<tabs >
+			<tab idMso="TabDeveloper">
+				<group id="vbaImportExport" label="VBA Import Export">
+					<button description="Update config file" id="btnMakeConfig" imageMso="FilePrepareMenu" label="Update Config" size="large" onAction="btnMakeConfig_onAction"/>
+					<button description="Export code" id="btnExport" imageMso="ExportTextFile" label="Export" size="large" onAction="btnExport_onAction"/>
+					<button description="Save code" id="btnSave" imageMso="FileSave" label="Save" size="large" onAction="btnSave_onAction"/>
+					<button description="Import code" id="btnImport" imageMso="ImportTextFile" label="Import" size="large" onAction="btnImport_onAction"/>
+				</group >
+			</tab >
+		</tabs >
+	</ribbon >
+</customUI >

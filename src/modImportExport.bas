@@ -154,7 +154,7 @@ End Sub
 '// * code modules which were exported are deleted or cleared.
 '// * References loaded in the Project which are listed in the configuration
 '//   file is deleted.
-Public Sub Export()
+Public Sub Export(Optional RemoveFromProject As Boolean = True)
 
     Dim prjActProj          As VBProject
     Dim Config              As clsConfiguration
@@ -180,18 +180,20 @@ Public Sub Export()
             Set comModule = prjActProj.VBComponents(strModuleName)
             EnsurePath Config.ModuleFullPath(strModuleName)
             comModule.Export Config.ModuleFullPath(strModuleName)
-
-            If comModule.Type = vbext_ct_Document Then
-                comModule.CodeModule.DeleteLines 1, comModule.CodeModule.CountOfLines
-            Else
-                prjActProj.VBComponents.Remove comModule
+            
+            If RemoveFromProject Then
+                If comModule.Type = vbext_ct_Document Then
+                    comModule.CodeModule.DeleteLines 1, comModule.CodeModule.CountOfLines
+                Else
+                    prjActProj.VBComponents.Remove comModule
+                End If
             End If
         End If
     Next varModuleName
 
     '// Remove all references listed
     For lngIndex = 1 To Config.ReferencesCount
-        If CollectionKeyExists(prjActProj.References, Config.ReferenceName(lngIndex)) Then
+        If RemoveFromProject And CollectionKeyExists(prjActProj.References, Config.ReferenceName(lngIndex)) Then
             prjActProj.References.Remove prjActProj.References(Config.ReferenceName(lngIndex))
         End If
     Next lngIndex
@@ -206,6 +208,12 @@ ErrHandler:
     End If
     GoTo exitSub
 
+End Sub
+
+'// Exports code modules without cleaning the current active
+'// VBProject as specifiedby the project's configuration file.
+Public Sub Save()
+    Export False
 End Sub
 
 '// Imports textual data from the file system such as VBA code to build the
