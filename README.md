@@ -42,8 +42,9 @@ When you return to work on the VBA project:
 2. Open the Excel workbook (`.xlsm` file) in Excel.
 3. Use the `Import` command to import the VBA code from the project directory\*
    and the references listed in the configuration file.
-4. When you're ready to save: use the `Make Config File` command to update the
-   config file; use the `Export` command to export the VBA code; then save
+4. Regularly use the `Save` command to save your changes to the file system while you work.
+5. Use the `Make Config File` command to update the config file when modules or references are added or removed.
+4. When you're finished, use the `Export` command to export your work, then save
    and close the Excel workbook.
 
 \* Only files listed in the configuration file will be imported.
