@@ -111,7 +111,7 @@ Github pull requests are also welcome.
 * Matthew Palermo - Author
 ([mattpalermo/VBA-Import-Export](https://github.com/mattpalermo/VBA-Import-Export))
 * Tim Hall - Author of the library [VBA-JSON](https://github.com/VBA-tools/VBA-JSON)
-* (Kevin Conner)[https://github.com/connerk] - Author of the Save action
+* [Kevin Conner](https://github.com/connerk) - Author of the Save action
 
 ## See Also
 
