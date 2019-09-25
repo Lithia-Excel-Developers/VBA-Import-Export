@@ -13,7 +13,7 @@ Private Const ForReading                As Integer = 1
 Private Const STRCONFIGFILENAME         As String = "CodeExport.config.json"
 
 Private Const STR_CONFIGKEY_PROJECTNAME             As String = "VBAProject Name"
-Private Const STR_CONFIGKEY_BASEPATH                As String = "Base Path"
+Private Const STR_CONFIGKEY_MODULEBASEPATH          As String = "Module Base Path"
 Private Const STR_CONFIGKEY_MODULEPATHS             As String = "Module Paths"
 Private Const STR_CONFIGKEY_REFERENCES              As String = "References"
 Private Const STR_CONFIGKEY_REFERENCE_NAME          As String = "Name"
@@ -22,6 +22,13 @@ Private Const STR_CONFIGKEY_REFERENCE_GUID          As String = "GUID"
 Private Const STR_CONFIGKEY_REFERENCE_MAJOR         As String = "Major"
 Private Const STR_CONFIGKEY_REFERENCE_MINOR         As String = "Minor"
 Private Const STR_CONFIGKEY_REFERENCE_PATH          As String = "Path"
+Private Const STR_CONFIGKEY_TESTBASEPATH            As String = "Test Base Path"
+Private Const STR_CONFIGKEY_TESTPATHS               As String = "Test Paths"
+Private Const STR_CONFIGKEY_TESTMODULESUFFIX        As String = "Test Module Prefix"
+
+Private Const STR_DEFAULT_MODULEBASEPATH            As String = "src"
+Private Const STR_DEFAULT_TESTBASEPATH            As String = "test"
+Private Const STR_DEFAULT_TESTMODULESUFFIX          As String = "_test"
 
 Private pProject        As VBProject
 Private pConfig         As Dictionary
@@ -89,34 +96,33 @@ End Sub
 
 
 '//
-'// Base Path Configuration for prefixing all module paths
+'// Module Base Path Configuration for prefixing all module paths
 '//
 
 '// Get the base path as determined by the configuration
-Public Property Get BasePath() As String
-    If pConfig.Exists(STR_CONFIGKEY_BASEPATH) Then
-        BasePath = pConfig(STR_CONFIGKEY_BASEPATH)
-    Else
-        BasePath = vbNullString
+Public Property Get ModuleBasePath() As String
+    If Not pConfig.Exists(STR_CONFIGKEY_MODULEBASEPATH) Then
+        pConfig.Add STR_CONFIGKEY_MODULEBASEPATH, STR_DEFAULT_MODULEBASEPATH
     End If
+    ModuleBasePath = pConfig(STR_CONFIGKEY_MODULEBASEPATH)
 End Property
 
 '// Set the configuration base path
-Public Property Let BasePath(ByVal newBasePath As String)
-    pConfig(STR_CONFIGKEY_BASEPATH) = newBasePath
+Public Property Let ModuleBasePath(ByVal newBasePath As String)
+    pConfig(STR_CONFIGKEY_MODULEBASEPATH) = newBasePath
 End Property
 
 '// Check if the base path is actually declared in the configuration
-'// This distinguishes between BasePath = "" and not being set at all.
-Public Property Get BasePathDeclared() As Boolean
-    BasePathDeclared = pConfig.Exists(STR_CONFIGKEY_BASEPATH)
+'// This distinguishes between ModuleBasePath = "" and not being set at all.
+Public Property Get ModuleBasePathDeclared() As Boolean
+    ModuleBasePathDeclared = pConfig.Exists(STR_CONFIGKEY_MODULEBASEPATH)
 End Property
 
 '// Remove the base path declaration from the configuration
-'// This makes BasePathDeclared = false
-Public Sub BasePathRemove()
-    If pConfig.Exists(STR_CONFIGKEY_BASEPATH) Then
-        pConfig.Remove STR_CONFIGKEY_BASEPATH
+'// This makes ModuleBasePathDeclared = false
+Public Sub ModuleBasePathRemove()
+    If pConfig.Exists(STR_CONFIGKEY_MODULEBASEPATH) Then
+        pConfig.Remove STR_CONFIGKEY_MODULEBASEPATH
     End If
 End Sub
 
@@ -158,7 +164,7 @@ End Property
 '// and the path of the project.
 Public Property Get ModuleFullPath(ByVal moduleName As String) As String
 
-    ModuleFullPath = FSO.BuildPath(BasePath, ModulePath(moduleName))
+    ModuleFullPath = FSO.BuildPath(ModuleBasePath, ModulePath(moduleName))
     If FSO.GetDriveName(ModuleFullPath) = vbNullString Then
         ModuleFullPath = FSO.BuildPath(ProjectDir, ModuleFullPath)
     End If
@@ -206,6 +212,138 @@ Private Property Get ModulePathsDictForWriting() As Dictionary
 
 End Property
 
+'//
+'// Test Base Path Configuration for prefixing all Test paths
+'//
+
+'// Get the base path as determined by the configuration
+Public Property Get TestBasePath() As String
+    If pConfig.Exists(STR_CONFIGKEY_TESTBASEPATH) Then
+        TestBasePath = pConfig(STR_CONFIGKEY_TESTBASEPATH)
+    Else
+        TestBasePath = vbNullString
+    End If
+End Property
+
+'// Set the configuration base path
+Public Property Let TestBasePath(ByVal newBasePath As String)
+    pConfig(STR_CONFIGKEY_TESTBASEPATH) = newBasePath
+End Property
+
+'// Check if the base path is actually declared in the configuration
+'// This distinguishes between TestBasePath = "" and not being set at all.
+Public Property Get TestBasePathDeclared() As Boolean
+    TestBasePathDeclared = pConfig.Exists(STR_CONFIGKEY_TESTBASEPATH)
+End Property
+
+'// Remove the base path declaration from the configuration
+'// This makes TestBasePathDeclared = false
+Public Sub TestBasePathRemove()
+    If pConfig.Exists(STR_CONFIGKEY_TESTBASEPATH) Then
+        pConfig.Remove STR_CONFIGKEY_TESTBASEPATH
+    End If
+End Sub
+
+'//
+'// Test paths configuration
+'//
+
+'// Check if a path for the given Test is declared in the configuration
+Public Property Get TestDeclared(ByVal TestName As String) As Boolean
+' TODO Rename to TestPathDeclared
+    TestDeclared = TestPathsDictReadOnly.Exists(TestName)
+
+End Property
+
+'// List all the names of the Tests which have been assigned a path in the
+'// configuration
+Public Property Get TestNames() As Variant()
+
+    TestNames = TestPathsDictReadOnly.Keys
+
+End Property
+
+'// Get the Test path for a Test as determined by the configuration
+Public Property Get TestPath(ByVal TestName As String) As String
+
+    TestPath = TestPathsDictReadOnly(TestName)
+
+End Property
+
+'// Set the configuration Test path for a Test
+Public Property Let TestPath(ByVal TestName As String, ByVal newPath As String)
+
+    TestPathsDictForWriting(TestName) = newPath
+
+End Property
+
+'// Evaluate a Test's absolute Test path as determined by the configuration
+'// and the path of the project.
+Public Property Get TestFullPath(ByVal TestName As String) As String
+
+    TestFullPath = FSO.BuildPath(TestBasePath, TestPath(TestName))
+    If FSO.GetDriveName(TestFullPath) = vbNullString Then
+        TestFullPath = FSO.BuildPath(ProjectDir, TestFullPath)
+    End If
+    TestFullPath = FSO.GetAbsolutePathName(TestFullPath)
+
+End Property
+
+'// Test module prefix
+'// Identify a test module based on a naming convention prefix
+'// Test modules require a prefix so if one is not defined, set to default
+Public Property Get TestModuleSuffix() As String
+    If Not pConfig.Exists(STR_CONFIGKEY_TESTMODULESUFFIX) Then
+        pConfig.Add STR_CONFIGKEY_TESTMODULESUFFIX, STR_DEFAULT_TESTMODULESUFFIX
+    End If
+    TestModuleSuffix = pConfig(STR_CONFIGKEY_TESTMODULESUFFIX)
+End Property
+
+Public Property Let TestModuleSuffix(ByVal Suffix As String)
+
+    pConfig(STR_CONFIGKEY_TESTMODULESUFFIX) = Suffix
+    
+End Property
+
+'// Remove the Test path declaration for a Test from the configuration
+'// This makes TestDeclared(TestName) = false
+Public Sub TestPathRemove(ByVal TestName As String)
+
+    TestPathsDictReadOnly.Remove TestName
+
+End Sub
+
+'// Remove the entire Test Paths declaration from the configuration
+Public Sub TestPathsRemove()
+    If pConfig.Exists(STR_CONFIGKEY_TESTPATHS) Then
+        pConfig.Remove STR_CONFIGKEY_TESTPATHS
+    End If
+End Sub
+
+'// Get a dictionary the represents the Test paths configuration
+'// Note that it may not actually be the configuration dictionary so don't write
+'// to it.
+Private Property Get TestPathsDictReadOnly() As Dictionary
+
+    If pConfig.Exists(STR_CONFIGKEY_TESTPATHS) Then
+        Set TestPathsDictReadOnly = pConfig(STR_CONFIGKEY_TESTPATHS)
+    Else
+        Set TestPathsDictReadOnly = New Dictionary
+    End If
+
+End Property
+
+'// Get the dictionary of the Test paths configuration.
+'// If the Test paths is not yet declared, this will create an empty
+'// declaration
+Private Property Get TestPathsDictForWriting() As Dictionary
+
+    If Not pConfig.Exists(STR_CONFIGKEY_TESTPATHS) Then
+        Set pConfig(STR_CONFIGKEY_TESTPATHS) = New Dictionary
+    End If
+    Set TestPathsDictForWriting = pConfig(STR_CONFIGKEY_TESTPATHS)
+
+End Property
 
 '//
 '// Library References configuration
@@ -225,12 +363,12 @@ Public Property Get ReferencesCount() As Long
 End Property
 
 '// Get the name of a reference declared in the references configuration
-Public Property Get ReferenceName(ByVal index As Long) As String
+Public Property Get ReferenceName(ByVal Index As Long) As String
     Dim collRefs    As Collection
     Dim dictRef     As Dictionary
 
     Set collRefs = pConfig(STR_CONFIGKEY_REFERENCES)
-    Set dictRef = collRefs(index)
+    Set dictRef = collRefs(Index)
     ReferenceName = dictRef(STR_CONFIGKEY_REFERENCE_NAME)
 End Property
 
@@ -251,12 +389,12 @@ Public Sub ReferencesUpdateFromVBRef(ByVal VBRef As Reference)
 End Sub
 
 '// Set a reference in the references list to represent the given VB reference.
-Private Sub ReferenceSetFromVBRef(ByVal index As Long, ByVal VBRef As Reference)
+Private Sub ReferenceSetFromVBRef(ByVal Index As Long, ByVal VBRef As Reference)
     Dim collRefs    As Collection
     Dim dictRef     As Dictionary
 
     Set collRefs = pConfig(STR_CONFIGKEY_REFERENCES)
-    Set dictRef = collRefs(index)
+    Set dictRef = collRefs(Index)
 
     dictRef(STR_CONFIGKEY_REFERENCE_NAME) = VBRef.Name
     dictRef(STR_CONFIGKEY_REFERENCE_DESCRIPTION) = VBRef.Description
@@ -295,11 +433,11 @@ Private Sub ReferenceAddFromVBRef(ByVal VBRef As Reference)
 End Sub
 
 '// Remove a reference declaration from the references configuration collection
-Public Sub ReferenceRemove(ByVal index As Long)
+Public Sub ReferenceRemove(ByVal Index As Long)
 
     Dim collRefs    As Collection
     Set collRefs = pConfig(STR_CONFIGKEY_REFERENCES)
-    collRefs.Remove index
+    collRefs.Remove Index
 
 End Sub
 
@@ -313,7 +451,7 @@ End Sub
 '// Add a reference in the references configuration list to the VBE references
 '// list. Will delete any existing reference in the VBE references list which
 '// has the same name.
-Public Sub ReferenceAddToVBRefs(ByVal index As Long, ByVal VBRefs As References)
+Public Sub ReferenceAddToVBRefs(ByVal Index As Long, ByVal VBRefs As References)
 
     Dim collRefs As Collection
     Dim dictRef As Dictionary
@@ -321,7 +459,7 @@ Public Sub ReferenceAddToVBRefs(ByVal index As Long, ByVal VBRefs As References)
     Dim boolPathTypeValid As Boolean
 
     Set collRefs = pConfig(STR_CONFIGKEY_REFERENCES)
-    Set dictRef = collRefs(index)
+    Set dictRef = collRefs(Index)
 
     boolLibTypeValid = _
         dictRef.Exists(STR_CONFIGKEY_REFERENCE_GUID) And _
@@ -335,8 +473,8 @@ Public Sub ReferenceAddToVBRefs(ByVal index As Long, ByVal VBRefs As References)
         Exit Sub
     End If
 
-    If CollectionKeyExists(VBRefs, ReferenceName(index)) Then
-        VBRefs.Remove VBRefs(ReferenceName(index))
+    If CollectionKeyExists(VBRefs, ReferenceName(Index)) Then
+        VBRefs.Remove VBRefs(ReferenceName(Index))
     End If
 
     If boolLibTypeValid Then
@@ -417,3 +555,5 @@ End Property
 Private Property Get ProjectConfigPath() As String
     ProjectConfigPath = FSO.BuildPath(ProjectDir, STRCONFIGFILENAME)
 End Property
+
+

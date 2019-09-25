@@ -4,49 +4,52 @@ Option Explicit
 Private MnuEvt      As clsVBECmdHandler
 Private EvtHandlers As New Collection
 
+Private Const STR_DEFAULT_VCSMENUCAPTION As String = "Version &Control"
+Private Const STR_DEFAULT_TESTMENUCAPTION As String = "Te&sts"
 
 Public Sub auto_open()
 
-    Call CreateVBEMenu
-    '// Call CreateXLMenu
+    CreateVBEVCSMenu
+    CreateVBETestMenu
 
 End Sub
 
 
 Public Sub auto_close()
-
-    Call RemoveVBEMenu
+    
+    RemoveVBEMenu STR_DEFAULT_VCSMENUCAPTION
+    RemoveVBEMenu STR_DEFAULT_TESTMENUCAPTION
 
 End Sub
 
 
-Private Sub CreateVBEMenu()
+Private Sub CreateVBEVCSMenu()
 
     Dim objMenu     As CommandBarPopup
     Dim objMenuItem As Object
 
     Set objMenu = Application.VBE.CommandBars(1).Controls.Add(Type:=msoControlPopup)
     With objMenu
-        objMenu.Caption = "E&xport for VCS"
+        objMenu.Caption = STR_DEFAULT_VCSMENUCAPTION
 
         Set objMenuItem = .Controls.Add(Type:=msoControlButton)
         objMenuItem.OnAction = "MakeConfigFile"
-        Call MenuEvents(objMenuItem)
+        MenuEvents objMenuItem
         objMenuItem.Caption = "&Update Config File"
 
         Set objMenuItem = .Controls.Add(Type:=msoControlButton)
         objMenuItem.OnAction = "Import"
-        Call MenuEvents(objMenuItem)
+        MenuEvents objMenuItem
         objMenuItem.Caption = "&Import"
 
         Set objMenuItem = .Controls.Add(Type:=msoControlButton)
         objMenuItem.OnAction = "Export"
-        Call MenuEvents(objMenuItem)
+        MenuEvents objMenuItem
         objMenuItem.Caption = "&Export"
-        
+
         Set objMenuItem = .Controls.Add(Type:=msoControlButton)
         objMenuItem.OnAction = "Save"
-        Call MenuEvents(objMenuItem)
+        MenuEvents objMenuItem
         objMenuItem.Caption = "&Save"
 
     End With
@@ -54,6 +57,28 @@ Private Sub CreateVBEMenu()
     Set objMenuItem = Nothing
     Set objMenu = Nothing
 
+End Sub
+
+Private Sub CreateVBETestMenu()
+
+    Dim objMenu     As CommandBarPopup
+    Dim objMenuItem As Object
+
+    Set objMenu = Application.VBE.CommandBars(1).Controls.Add(Type:=msoControlPopup)
+    With objMenu
+        objMenu.Caption = STR_DEFAULT_TESTMENUCAPTION
+
+        Set objMenuItem = .Controls.Add(Type:=msoControlButton)
+        objMenuItem.OnAction = "RunTests"
+        MenuEvents objMenuItem
+        objMenuItem.Caption = "&Run Tests"
+
+        Set objMenuItem = .Controls.Add(Type:=msoControlButton)
+        objMenuItem.OnAction = "InitTests"
+        MenuEvents objMenuItem
+        objMenuItem.Caption = "&Initialize Test Suite"
+
+    End With
 End Sub
 
 
@@ -66,28 +91,11 @@ Private Sub MenuEvents(ByVal objMenuItem As Object)
 End Sub
 
 
-Private Sub CreateXLMenu()
-
-    MenuBars(xlWorksheet).Menus.Add Caption:="E&xport for VCS"
-    With MenuBars(xlWorksheet).Menus("Export for VCS").MenuItems
-        .Add Caption:="&Make Config File", _
-             OnAction:="MakeConfigFile"
-        .Add Caption:="&Import", _
-             OnAction:="Import"
-        .Add Caption:="&Save", _
-             OnAction:="Save"
-        .Add Caption:="&Export", _
-             OnAction:="Export"
-    End With
-
-End Sub
-
-
-Private Sub RemoveVBEMenu()
+Private Sub RemoveVBEMenu(ByVal MenuName As String)
 
     On Error Resume Next
 
-    Application.VBE.CommandBars(1).Controls("Export for VCS").Delete
+    Application.VBE.CommandBars(1).Controls(Replace(MenuName, "&", "")).Delete
 
     '// Clear the EvtHandlers collection if there is anything in it
     While EvtHandlers.Count > 0
@@ -97,14 +105,14 @@ Private Sub RemoveVBEMenu()
     Set EvtHandlers = Nothing
     Set MnuEvt = Nothing
 
-    Application.CommandBars("Worksheet Menu Bar").Controls("E&xport for VCS").Delete
+    Application.CommandBars("Worksheet Menu Bar").Controls(Replace(MenuName, "&", "")).Delete
     On Error GoTo 0
 
 End Sub
 
 '// RibUI callbacks
 Public Sub btnMakeConfig_onAction(control As IRibbonControl)
-    Call MakeConfigFile
+    MakeConfigFile
 End Sub
 Public Sub btnExport_onAction(control As IRibbonControl)
     Export
@@ -115,3 +123,7 @@ End Sub
 Public Sub btnImport_onAction(control As IRibbonControl)
     Import
 End Sub
+Public Sub btnRunTests_onAction(control As IRibbonControl)
+    RunTests
+End Sub
+

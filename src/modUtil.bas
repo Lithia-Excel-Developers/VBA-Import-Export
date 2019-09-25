@@ -3,7 +3,7 @@ Option Explicit
 
 '// We just need the FSO procedures, no state is necessary
 Public FSO As New FileSystemObject
-
+Public ModuleHandler As New clsModuleHandler
 
 '// Hack to check if Collection key exists
 Public Function CollectionKeyExists(ByVal coll As Object, ByVal key As String) As Boolean
@@ -24,7 +24,7 @@ Public Function HandleCrash(ByVal ErrNumber As Long, ByVal ErrDesc As String, By
     UserAction = MsgBox( _
         Prompt:= _
             "An unexpected problem occured. Please report this to " & _
-            "https://github.com/spences10/VBA-IDE-Code-Export/issues" & vbNewLine & vbNewLine & _
+            "https://github.com/Lithia-Motors-OSS/VBA-Import-Export/issues" & vbNewLine & vbNewLine & _
             "Error Number: " & ErrNumber & vbNewLine & _
             "Error Description: " & ErrDesc & vbNewLine & _
             "Error Source: " & ErrSource & vbNewLine & vbNewLine & _
