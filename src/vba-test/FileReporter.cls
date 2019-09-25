@@ -59,16 +59,16 @@ Private Sub PrintHeader(Suite As TestSuite)
     AppendToFile "===" & VBA.IIf(Suite.Description <> "", " " & Suite.Description & " ===", "")
 End Sub
 
-Private Sub PrintResult(Test As TestCase)
-    If Test.Result = TestResultType.Skipped Then
+Private Sub PrintResult(test As TestCase)
+    If test.Result = TestResultType.Skipped Then
         Exit Sub
     End If
 
-    AppendToFile ResultTypeToString(Test.Result) & " " & Test.Description
+    AppendToFile ResultTypeToString(test.Result) & " " & test.Description
     
-    If Test.Result = TestResultType.Fail Then
+    If test.Result = TestResultType.Fail Then
         Dim Failure As Variant
-        For Each Failure In Test.Failures
+        For Each Failure In test.Failures
             AppendToFile "  " & Failure
         Next Failure
     End If
@@ -131,8 +131,8 @@ Cleanup:
     Close #File
 End Sub
 
-Private Sub pSuite_Result(Test As TestCase)
-    PrintResult Test
+Private Sub pSuite_Result(test As TestCase)
+    PrintResult test
 End Sub
 
 Private Sub pSuite_Group(Suite As TestSuite)

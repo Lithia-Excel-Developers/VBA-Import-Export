@@ -24,11 +24,11 @@ Private Const STR_CONFIGKEY_REFERENCE_MINOR         As String = "Minor"
 Private Const STR_CONFIGKEY_REFERENCE_PATH          As String = "Path"
 Private Const STR_CONFIGKEY_TESTBASEPATH            As String = "Test Base Path"
 Private Const STR_CONFIGKEY_TESTPATHS               As String = "Test Paths"
-Private Const STR_CONFIGKEY_TESTMODULEPREFIX        As String = "Test Module Prefix"
+Private Const STR_CONFIGKEY_TESTMODULESUFFIX        As String = "Test Module Prefix"
 
 Private Const STR_DEFAULT_MODULEBASEPATH            As String = "src"
 Private Const STR_DEFAULT_TESTBASEPATH            As String = "test"
-Private Const STR_DEFAULT_TESTMODULEPREFIX          As String = "_test"
+Private Const STR_DEFAULT_TESTMODULESUFFIX          As String = "_test"
 
 Private pProject        As VBProject
 Private pConfig         As Dictionary
@@ -292,16 +292,16 @@ End Property
 '// Test module prefix
 '// Identify a test module based on a naming convention prefix
 '// Test modules require a prefix so if one is not defined, set to default
-Public Property Get TestModulePrefix() As String
-    If Not pConfig.Exists(STR_CONFIGKEY_TESTMODULEPREFIX) Then
-        pConfig.Add STR_CONFIGKEY_TESTMODULEPREFIX, STR_DEFAULT_TESTMODULEPREFIX
+Public Property Get TestModuleSuffix() As String
+    If Not pConfig.Exists(STR_CONFIGKEY_TESTMODULESUFFIX) Then
+        pConfig.Add STR_CONFIGKEY_TESTMODULESUFFIX, STR_DEFAULT_TESTMODULESUFFIX
     End If
-    TestModulePrefix = pConfig(STR_CONFIGKEY_TESTMODULEPREFIX)
+    TestModuleSuffix = pConfig(STR_CONFIGKEY_TESTMODULESUFFIX)
 End Property
 
-Public Property Let TestModulePrefix(ByVal Prefix As String)
+Public Property Let TestModuleSuffix(ByVal Suffix As String)
 
-    pConfig(STR_CONFIGKEY_TESTMODULEPREFIX) = Prefix
+    pConfig(STR_CONFIGKEY_TESTMODULESUFFIX) = Suffix
     
 End Property
 

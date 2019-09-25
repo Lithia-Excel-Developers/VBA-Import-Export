@@ -35,9 +35,9 @@ Public Enum TestResultType
     Skipped
 End Enum
 
-Public Event BeforeEach(Test As TestCase)
-Public Event Result(Test As TestCase)
-Public Event AfterEach(Test As TestCase)
+Public Event BeforeEach(test As TestCase)
+Public Event Result(test As TestCase)
+Public Event AfterEach(test As TestCase)
 Public Event Group(Suite As TestSuite)
 
 ''
@@ -61,15 +61,15 @@ Public Parent As TestSuite
 Public Property Get Result() As TestResultType
     Result = TestResultType.Pending
     
-    Dim Test As TestCase
-    For Each Test In Me.Tests
-        If Test.Result = TestResultType.Pass Then
+    Dim test As TestCase
+    For Each test In Me.Tests
+        If test.Result = TestResultType.Pass Then
             Result = TestResultType.Pass
-        ElseIf Test.Result = TestResultType.Fail Then
+        ElseIf test.Result = TestResultType.Fail Then
             Result = TestResultType.Fail
             Exit For
         End If
-    Next Test
+    Next test
 End Property
 
 ''
@@ -107,7 +107,7 @@ End Property
 ''
 ' Create a new test case with description
 ''
-Public Function Test(Description As String) As TestCase
+Public Function test(Description As String) As TestCase
     Dim Instance As New TestCase
     
     Instance.Description = Description
@@ -115,7 +115,7 @@ Public Function Test(Description As String) As TestCase
     
     OnTestBefore Instance
     
-    Set Test = Instance
+    Set test = Instance
 End Function
 
 ''
@@ -135,55 +135,55 @@ End Function
 ''
 ' @internal
 ''
-Public Sub TestComplete(Test As TestCase)
-    OnTestResult Test
-    OnTestAfter Test
+Public Sub TestComplete(test As TestCase)
+    OnTestResult test
+    OnTestAfter test
 End Sub
 
 ''
 ' @internal
 ''
-Public Sub OnTestBefore(Test As TestCase)
+Public Sub OnTestBefore(test As TestCase)
     If Not Me.Parent Is Nothing Then
-        Me.Parent.OnTestBefore Test
+        Me.Parent.OnTestBefore test
     End If
     
-    RaiseEvent BeforeEach(Test)
+    RaiseEvent BeforeEach(test)
 End Sub
 
 ''
 ' @internal
 ''
-Public Sub OnTestResult(Test As TestCase)
-    Tests.Add Test
-    RaiseEvent Result(Test)
+Public Sub OnTestResult(test As TestCase)
+    Tests.Add test
+    RaiseEvent Result(test)
     
     If Not Me.Parent Is Nothing Then
-        Me.Parent.OnTestResult Test
+        Me.Parent.OnTestResult test
     End If
 End Sub
 
 ''
 ' @internal
 ''
-Public Sub OnTestAfter(Test As TestCase)
-    RaiseEvent AfterEach(Test)
+Public Sub OnTestAfter(test As TestCase)
+    RaiseEvent AfterEach(test)
     
     If Not Me.Parent Is Nothing Then
-        Me.Parent.OnTestAfter Test
+        Me.Parent.OnTestAfter test
     End If
 End Sub
 
 ' ============================================= '
 
 Private Function GetTestsByType(ResultType As TestResultType) As VBA.Collection
-    Dim Test As TestCase
+    Dim test As TestCase
     Dim Filtered As New VBA.Collection
-    For Each Test In Me.Tests
-        If Test.Result = ResultType Then
-            Filtered.Add Test
+    For Each test In Me.Tests
+        If test.Result = ResultType Then
+            Filtered.Add test
         End If
-    Next Test
+    Next test
 
     Set GetTestsByType = Filtered
 End Function

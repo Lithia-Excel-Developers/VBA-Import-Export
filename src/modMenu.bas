@@ -34,22 +34,22 @@ Private Sub CreateVBEVCSMenu()
 
         Set objMenuItem = .Controls.Add(Type:=msoControlButton)
         objMenuItem.OnAction = "MakeConfigFile"
-        Call MenuEvents(objMenuItem)
+        MenuEvents objMenuItem
         objMenuItem.Caption = "&Update Config File"
 
         Set objMenuItem = .Controls.Add(Type:=msoControlButton)
         objMenuItem.OnAction = "Import"
-        Call MenuEvents(objMenuItem)
+        MenuEvents objMenuItem
         objMenuItem.Caption = "&Import"
 
         Set objMenuItem = .Controls.Add(Type:=msoControlButton)
         objMenuItem.OnAction = "Export"
-        Call MenuEvents(objMenuItem)
+        MenuEvents objMenuItem
         objMenuItem.Caption = "&Export"
 
         Set objMenuItem = .Controls.Add(Type:=msoControlButton)
         objMenuItem.OnAction = "Save"
-        Call MenuEvents(objMenuItem)
+        MenuEvents objMenuItem
         objMenuItem.Caption = "&Save"
 
     End With
@@ -70,12 +70,12 @@ Private Sub CreateVBETestMenu()
 
         Set objMenuItem = .Controls.Add(Type:=msoControlButton)
         objMenuItem.OnAction = "RunTests"
-        Call MenuEvents(objMenuItem)
+        MenuEvents objMenuItem
         objMenuItem.Caption = "&Run Tests"
 
         Set objMenuItem = .Controls.Add(Type:=msoControlButton)
         objMenuItem.OnAction = "InitTests"
-        Call MenuEvents(objMenuItem)
+        MenuEvents objMenuItem
         objMenuItem.Caption = "&Initialize Test Suite"
 
     End With
@@ -112,7 +112,7 @@ End Sub
 
 '// RibUI callbacks
 Public Sub btnMakeConfig_onAction(control As IRibbonControl)
-    Call MakeConfigFile
+    MakeConfigFile
 End Sub
 Public Sub btnExport_onAction(control As IRibbonControl)
     Export
