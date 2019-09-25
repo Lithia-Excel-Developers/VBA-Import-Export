@@ -151,13 +151,6 @@ Public Sub ExportTests(Optional RemoveFromProject As Boolean = True)
         End If
     Next varModuleName
 
-    '// Remove all references listed
-    For lngIndex = 1 To Config.ReferencesCount
-        If RemoveFromProject And CollectionKeyExists(prjActProj.References, Config.ReferenceName(lngIndex)) Then
-            prjActProj.References.Remove prjActProj.References(Config.ReferenceName(lngIndex))
-        End If
-    Next lngIndex
-
 exitSub:
     Exit Sub
 
@@ -173,7 +166,7 @@ End Sub
 '// Exports code modules without cleaning the current active
 '// VBProject as specifiedby the project's configuration file.
 Public Sub SaveTests()
-    Export False
+    ExportTests False
 End Sub
 
 '// Imports textual data from the file system such as VBA code to build the
@@ -205,10 +198,7 @@ Public Sub ImportTests()
         strModuleName = varModuleName
         ModuleHandler.ImportModule prjActProj, strModuleName, Config.TestFullPath(strModuleName)
     Next varModuleName
-
-    '// Add references listed in the config file
-    Config.ReferencesAddToVBRefs prjActProj.References
-
+    
     '// Set the VBA Project name
     If Config.VBAProjectNameDeclared Then
         prjActProj.Name = Config.VBAProjectName
@@ -258,6 +248,7 @@ Public Sub RunTests(Optional OutputPath As Variant)
         Application.Run test & ".Run", Suite.Group(CStr(test))
     
     Next test
+    
 exitSub:
     Exit Sub
 

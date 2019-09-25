@@ -6,13 +6,17 @@ easily. This allows VBA code to be stored in plain text files alongside the
 `.xlsm` file. This is essential for effectively utilizing Git in a VBA project
 (or any other VCS).
 
-## Installation
+## Installing Compiled Binary
 
-1. Download the Add-in: [VBA-Import-Export.xlam](https://github.com/mattpalermo/VBA-Import-Export/releases/download/v0.4.0/VBA-Import-Export.xlam) (version 0.4.0)
+1. Download the Add-in from the repository Releases page
 2. Add and enable the Add-in in Excel
 3. In Excel, Check the `Trust access to the VBA project model` check box
    located in `Trust Centre -> Trust Centre Settings -> Macro Settings ->
    Trust access to the VBA project model`.
+
+## Building Binary from Source
+
+'{TODO}
 
 ## Usage
 
@@ -99,6 +103,11 @@ The `Export` command will:
 * Do the same as the `Save` command.
 * Dereference libraries declared in the `References` configuration property.
 
+
+## Run Tests
+
+'{TODO}
+
 ## Support
 
 You can submit questions, requests and bug reports to the
@@ -111,8 +120,9 @@ Github pull requests are also welcome.
 ([spences10/VBA-IDE-Code-Export](https://github.com/spences10/VBA-IDE-Code-Export))
 * Matthew Palermo - Author
 ([mattpalermo/VBA-Import-Export](https://github.com/mattpalermo/VBA-Import-Export))
-* Tim Hall - Author of the library [VBA-JSON](https://github.com/VBA-tools/VBA-JSON)
-* [Kevin Conner](https://github.com/connerk) - Author of the Save action
+* Tim Hall - Author of the libraries [VBA-JSON](https://github.com/VBA-tools/VBA-JSON) & [VBA-TEST](https://github.com/VBA-tools/vba-test)
+* [Kevin Conner](https://github.com/connerk) - Author
+([Lithia-Motors-OSS/VBA-Import-Export](https://github.com/Lithia-Motors-OSS/VBA-Import-Export))
 
 ## See Also
 

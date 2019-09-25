@@ -54,9 +54,6 @@ Private Sub CreateVBEVCSMenu()
 
     End With
 
-    Set objMenuItem = Nothing
-    Set objMenu = Nothing
-
 End Sub
 
 Private Sub CreateVBETestMenu()
@@ -71,14 +68,30 @@ Private Sub CreateVBETestMenu()
         Set objMenuItem = .Controls.Add(Type:=msoControlButton)
         objMenuItem.OnAction = "RunTests"
         MenuEvents objMenuItem
-        objMenuItem.Caption = "&Run Tests"
-
+        objMenuItem.Caption = "&Run All Tests"
+        
         Set objMenuItem = .Controls.Add(Type:=msoControlButton)
         objMenuItem.OnAction = "InitTests"
         MenuEvents objMenuItem
-        objMenuItem.Caption = "&Initialize Test Suite"
+        objMenuItem.Caption = "Add Tests to &Config"
+
+        Set objMenuItem = .Controls.Add(Type:=msoControlButton)
+        objMenuItem.OnAction = "ImportTests"
+        MenuEvents objMenuItem
+        objMenuItem.Caption = "&Import"
+
+        Set objMenuItem = .Controls.Add(Type:=msoControlButton)
+        objMenuItem.OnAction = "ExportTests"
+        MenuEvents objMenuItem
+        objMenuItem.Caption = "&Export"
+
+        Set objMenuItem = .Controls.Add(Type:=msoControlButton)
+        objMenuItem.OnAction = "Save"
+        MenuEvents objMenuItem
+        objMenuItem.Caption = "&Save"
 
     End With
+       
 End Sub
 
 

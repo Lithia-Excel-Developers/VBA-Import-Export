@@ -41,6 +41,7 @@ Public Sub MakeConfigFile()
     For Each comModule In prjActProj.VBComponents
         boolCreateNewEntry = _
             ModuleHandler.ExportableModule(comModule) And _
+            InStr(1, comModule.Name, Config.TestModuleSuffix) = 0 And _
             Not Config.ModuleDeclared(comModule.Name)
 
         If boolCreateNewEntry Then
