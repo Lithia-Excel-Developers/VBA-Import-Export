@@ -8,6 +8,8 @@
 		"modMenu": "modMenu.bas",
 		"modUtil": "modUtil.bas",
 		"clsConfiguration": "clsConfiguration.cls",
+		"modImportExportTests": "modImportExportTests.bas",
+		"clsModuleHandler": "clsModuleHandler.cls",
 		"FileReporter": "vba-test/FileReporter.cls",
 		"ImmediateReporter": "vba-test/ImmediateReporter.cls",
 		"TestCase": "vba-test/TestCase.cls",

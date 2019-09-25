@@ -37,24 +37,14 @@ Public Sub MakeConfigFile()
     Config.Project = prjActProj
     Config.ReadFromProjectConfigFile
 
-    '// Initial Configuration scripts.
-    '// These won't happen if a config file already exists
-    If Config.ReferencesCount = 0 Then
-
-        '// Generate module base bath
-        Config.ModuleBasePath = "src"
-        Config.TestBasePath = "test"
-        
-    End If
-
     '// Generate entries for modules not yet listed
     For Each comModule In prjActProj.VBComponents
         boolCreateNewEntry = _
-            ExportableModule(comModule) And _
+            ModuleHandler.ExportableModule(comModule) And _
             Not Config.ModuleDeclared(comModule.Name)
 
         If boolCreateNewEntry Then
-            Config.ModulePath(comModule.Name) = comModule.Name & "." & FileExtension(comModule)
+            Config.ModulePath(comModule.Name) = comModule.Name & "." & ModuleHandler.FileExtension(comModule)
         End If
     Next comModule
 
@@ -65,7 +55,7 @@ Public Sub MakeConfigFile()
         strModuleName = varModuleName
         boolDeleteModule = True
         If CollectionKeyExists(prjActProj.VBComponents, strModuleName) Then
-            If ExportableModule(prjActProj.VBComponents(strModuleName)) Then
+            If ModuleHandler.ExportableModule(prjActProj.VBComponents(strModuleName)) Then
                 boolDeleteModule = False
             End If
         End If
@@ -172,7 +162,7 @@ Public Sub Export(Optional RemoveFromProject As Boolean = True)
     Dim lngIndex            As Long
     Dim strModuleName       As String
     Dim varModuleName       As Variant
-
+    
     On Error GoTo ErrHandler
 
     Set prjActProj = Application.VBE.ActiveVBProject
@@ -185,12 +175,12 @@ Public Sub Export(Optional RemoveFromProject As Boolean = True)
     '// Export all modules listed in the configuration
     For Each varModuleName In Config.ModuleNames
         strModuleName = varModuleName
-        ' TODO Provide a warning if module listed in configuration is not found
         If CollectionKeyExists(prjActProj.VBComponents, strModuleName) Then
             Set comModule = prjActProj.VBComponents(strModuleName)
-            EnsurePath Config.ModuleFullPath(strModuleName)
+            ModuleHandler.EnsurePath Config.ModuleFullPath(strModuleName)
+                
             comModule.Export Config.ModuleFullPath(strModuleName)
-
+            
             If RemoveFromProject Then
                 If comModule.Type = vbext_ct_Document Then
                     comModule.CodeModule.DeleteLines 1, comModule.CodeModule.CountOfLines
@@ -198,6 +188,8 @@ Public Sub Export(Optional RemoveFromProject As Boolean = True)
                     prjActProj.VBComponents.Remove comModule
                 End If
             End If
+        Else
+            ' TODO Provide a warning if module listed in configuration is not found
         End If
     Next varModuleName
 
@@ -240,7 +232,7 @@ Public Sub Import()
     Dim Config              As clsConfiguration
     Dim strModuleName       As String
     Dim varModuleName       As Variant
-
+    
     On Error GoTo catchError
 
     Set prjActProj = Application.VBE.ActiveVBProject
@@ -253,7 +245,7 @@ Public Sub Import()
     '// Import code from listed module files
     For Each varModuleName In Config.ModuleNames
         strModuleName = varModuleName
-        ImportModule prjActProj, strModuleName, Config.ModuleFullPath(strModuleName)
+        ModuleHandler.ImportModule prjActProj, strModuleName, Config.ModuleFullPath(strModuleName)
     Next varModuleName
 
     '// Add references listed in the config file
@@ -273,116 +265,5 @@ catchError:
         Resume
     End If
     GoTo exitSub
-
-End Sub
-
-
-'// Import a VBA code module... how hard could it be right?
-Private Sub ImportModule(ByVal Project As VBProject, ByVal moduleName As String, ByVal ModulePath As String)
-
-    Dim comNewImport        As VBComponent
-    Dim comExistingComp     As VBComponent
-    Dim modCodeCopy         As CodeModule
-    Dim modCodePaste        As CodeModule
-
-    Set comNewImport = Project.VBComponents.Import(ModulePath)
-    If comNewImport.Name <> moduleName Then
-        If CollectionKeyExists(Project.VBComponents, moduleName) Then
-
-            Set comExistingComp = Project.VBComponents(moduleName)
-            If comExistingComp.Type = vbext_ct_Document Then
-
-                Set modCodeCopy = comNewImport.CodeModule
-                Set modCodePaste = comExistingComp.CodeModule
-                modCodePaste.DeleteLines 1, modCodePaste.CountOfLines
-                If modCodeCopy.CountOfLines > 0 Then
-                    modCodePaste.AddFromString modCodeCopy.Lines(1, modCodeCopy.CountOfLines)
-                End If
-                Project.VBComponents.Remove comNewImport
-
-            Else
-
-                Project.VBComponents.Remove comExistingComp
-                comNewImport.Name = moduleName
-
-            End If
-        Else
-
-            comNewImport.Name = moduleName
-
-        End If
-    End If
-
-End Sub
-
-
-'// Is the given module exportable by this tool?
-Private Function ExportableModule(ByVal comModule As VBComponent) As Boolean
-
-    ExportableModule = _
-        (Not ModuleEmpty(comModule)) And _
-        (Not FileExtension(comModule) = vbNullString)
-
-End Function
-
-
-'// Check if a code module is effectively empty.
-'// effectively empty should be functionally and semantically equivelent to
-'// actually empty.
-Private Function ModuleEmpty(ByVal comModule As VBComponent) As Boolean
-
-    Dim lngNumLines As Long
-    Dim lngCurLine As Long
-    Dim strCurLine As String
-
-    ModuleEmpty = True
-
-    lngNumLines = comModule.CodeModule.CountOfLines
-    For lngCurLine = 1 To lngNumLines
-        strCurLine = comModule.CodeModule.Lines(lngCurLine, 1)
-        If Not (strCurLine = "Option Explicit" Or strCurLine = "") Then
-            ModuleEmpty = False
-            Exit Function
-        End If
-    Next lngCurLine
-
-End Function
-
-
-'// The appropriate file extension for exporting the given module
-Private Function FileExtension(ByVal comModule As VBComponent) As String
-
-    Select Case comModule.Type
-        Case vbext_ct_StdModule
-            FileExtension = "bas"
-        Case vbext_ct_ClassModule, vbext_ct_Document
-            FileExtension = "cls"
-        Case vbext_ct_MSForm
-            FileExtension = "frm"
-        Case Else
-            FileExtension = vbNullString
-    End Select
-
-End Function
-
-
-'// Ensure path to a file exists. Creates missing folders.
-Private Sub EnsurePath(ByVal Path As String)
-
-    Dim strParentPath As String
-
-    Set FSO = New Scripting.FileSystemObject
-    strParentPath = FSO.GetParentFolderName(Path)
-
-    If Not strParentPath = "" Then
-        EnsurePath strParentPath
-        If Not FSO.FolderExists(strParentPath) Then
-            If FSO.FileExists(strParentPath) Then
-                Err.Raise vbObjectError + 1, "modImportExport:EnsurePath", "A file exists where a folder needs to be: " & strParentPath
-            Else
-                FSO.CreateFolder (strParentPath)
-            End If
-        End If
-    End If
 
 End Sub

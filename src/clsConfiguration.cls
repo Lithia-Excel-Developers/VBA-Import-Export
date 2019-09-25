@@ -24,6 +24,11 @@ Private Const STR_CONFIGKEY_REFERENCE_MINOR         As String = "Minor"
 Private Const STR_CONFIGKEY_REFERENCE_PATH          As String = "Path"
 Private Const STR_CONFIGKEY_TESTBASEPATH            As String = "Test Base Path"
 Private Const STR_CONFIGKEY_TESTPATHS               As String = "Test Paths"
+Private Const STR_CONFIGKEY_TESTMODULEPREFIX        As String = "Test Module Prefix"
+
+Private Const STR_DEFAULT_MODULEBASEPATH            As String = "src"
+Private Const STR_DEFAULT_TESTBASEPATH            As String = "test"
+Private Const STR_DEFAULT_TESTMODULEPREFIX          As String = "_test"
 
 Private pProject        As VBProject
 Private pConfig         As Dictionary
@@ -96,11 +101,10 @@ End Sub
 
 '// Get the base path as determined by the configuration
 Public Property Get ModuleBasePath() As String
-    If pConfig.Exists(STR_CONFIGKEY_MODULEBASEPATH) Then
-        ModuleBasePath = pConfig(STR_CONFIGKEY_MODULEBASEPATH)
-    Else
-        ModuleBasePath = vbNullString
+    If Not pConfig.Exists(STR_CONFIGKEY_MODULEBASEPATH) Then
+        pConfig.Add STR_CONFIGKEY_MODULEBASEPATH, STR_DEFAULT_MODULEBASEPATH
     End If
+    ModuleBasePath = pConfig(STR_CONFIGKEY_MODULEBASEPATH)
 End Property
 
 '// Set the configuration base path
@@ -285,6 +289,22 @@ Public Property Get TestFullPath(ByVal TestName As String) As String
 
 End Property
 
+'// Test module prefix
+'// Identify a test module based on a naming convention prefix
+'// Test modules require a prefix so if one is not defined, set to default
+Public Property Get TestModulePrefix() As String
+    If Not pConfig.Exists(STR_CONFIGKEY_TESTMODULEPREFIX) Then
+        pConfig.Add STR_CONFIGKEY_TESTMODULEPREFIX, STR_DEFAULT_TESTMODULEPREFIX
+    End If
+    TestModulePrefix = pConfig(STR_CONFIGKEY_TESTMODULEPREFIX)
+End Property
+
+Public Property Let TestModulePrefix(ByVal Prefix As String)
+
+    pConfig(STR_CONFIGKEY_TESTMODULEPREFIX) = Prefix
+    
+End Property
+
 '// Remove the Test path declaration for a Test from the configuration
 '// This makes TestDeclared(TestName) = false
 Public Sub TestPathRemove(ByVal TestName As String)
@@ -343,12 +363,12 @@ Public Property Get ReferencesCount() As Long
 End Property
 
 '// Get the name of a reference declared in the references configuration
-Public Property Get ReferenceName(ByVal index As Long) As String
+Public Property Get ReferenceName(ByVal Index As Long) As String
     Dim collRefs    As Collection
     Dim dictRef     As Dictionary
 
     Set collRefs = pConfig(STR_CONFIGKEY_REFERENCES)
-    Set dictRef = collRefs(index)
+    Set dictRef = collRefs(Index)
     ReferenceName = dictRef(STR_CONFIGKEY_REFERENCE_NAME)
 End Property
 
@@ -369,12 +389,12 @@ Public Sub ReferencesUpdateFromVBRef(ByVal VBRef As Reference)
 End Sub
 
 '// Set a reference in the references list to represent the given VB reference.
-Private Sub ReferenceSetFromVBRef(ByVal index As Long, ByVal VBRef As Reference)
+Private Sub ReferenceSetFromVBRef(ByVal Index As Long, ByVal VBRef As Reference)
     Dim collRefs    As Collection
     Dim dictRef     As Dictionary
 
     Set collRefs = pConfig(STR_CONFIGKEY_REFERENCES)
-    Set dictRef = collRefs(index)
+    Set dictRef = collRefs(Index)
 
     dictRef(STR_CONFIGKEY_REFERENCE_NAME) = VBRef.Name
     dictRef(STR_CONFIGKEY_REFERENCE_DESCRIPTION) = VBRef.Description
@@ -413,11 +433,11 @@ Private Sub ReferenceAddFromVBRef(ByVal VBRef As Reference)
 End Sub
 
 '// Remove a reference declaration from the references configuration collection
-Public Sub ReferenceRemove(ByVal index As Long)
+Public Sub ReferenceRemove(ByVal Index As Long)
 
     Dim collRefs    As Collection
     Set collRefs = pConfig(STR_CONFIGKEY_REFERENCES)
-    collRefs.Remove index
+    collRefs.Remove Index
 
 End Sub
 
@@ -431,7 +451,7 @@ End Sub
 '// Add a reference in the references configuration list to the VBE references
 '// list. Will delete any existing reference in the VBE references list which
 '// has the same name.
-Public Sub ReferenceAddToVBRefs(ByVal index As Long, ByVal VBRefs As References)
+Public Sub ReferenceAddToVBRefs(ByVal Index As Long, ByVal VBRefs As References)
 
     Dim collRefs As Collection
     Dim dictRef As Dictionary
@@ -439,7 +459,7 @@ Public Sub ReferenceAddToVBRefs(ByVal index As Long, ByVal VBRefs As References)
     Dim boolPathTypeValid As Boolean
 
     Set collRefs = pConfig(STR_CONFIGKEY_REFERENCES)
-    Set dictRef = collRefs(index)
+    Set dictRef = collRefs(Index)
 
     boolLibTypeValid = _
         dictRef.Exists(STR_CONFIGKEY_REFERENCE_GUID) And _
@@ -453,8 +473,8 @@ Public Sub ReferenceAddToVBRefs(ByVal index As Long, ByVal VBRefs As References)
         Exit Sub
     End If
 
-    If CollectionKeyExists(VBRefs, ReferenceName(index)) Then
-        VBRefs.Remove VBRefs(ReferenceName(index))
+    If CollectionKeyExists(VBRefs, ReferenceName(Index)) Then
+        VBRefs.Remove VBRefs(ReferenceName(Index))
     End If
 
     If boolLibTypeValid Then
