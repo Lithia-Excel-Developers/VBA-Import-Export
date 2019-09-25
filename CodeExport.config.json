@@ -1,13 +1,17 @@
 {
-	"VBAProject Name": "VBAImportExport",
 	"Module Base Path": "src",
+	"Test Base Path": "test",
 	"Module Paths": {
-		"clsConfiguration": "clsConfiguration.cls",
 		"clsVBECmdHandler": "clsVBECmdHandler.cls",
 		"JsonConverter": "JsonConverter.bas",
 		"modImportExport": "modImportExport.bas",
 		"modMenu": "modMenu.bas",
-		"modUtil": "modUtil.bas"
+		"modUtil": "modUtil.bas",
+		"clsConfiguration": "clsConfiguration.cls",
+		"FileReporter": "vba-test/FileReporter.cls",
+		"ImmediateReporter": "vba-test/ImmediateReporter.cls",
+		"TestCase": "vba-test/TestCase.cls",
+		"TestSuite": "vba-test/TestSuite.cls"
 	},
 	"References": [
 		{
