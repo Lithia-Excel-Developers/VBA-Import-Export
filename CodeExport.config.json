@@ -1,6 +1,6 @@
 {
 	"VBAProject Name": "VBAImportExport",
-	"BasePath": "src",
+	"Module Base Path": "src",
 	"Module Paths": {
 		"clsConfiguration": "clsConfiguration.cls",
 		"clsVBECmdHandler": "clsVBECmdHandler.cls",

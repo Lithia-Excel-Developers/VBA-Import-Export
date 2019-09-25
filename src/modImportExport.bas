@@ -37,6 +37,16 @@ Public Sub MakeConfigFile()
     Config.Project = prjActProj
     Config.ReadFromProjectConfigFile
 
+    '// Initial Configuration scripts.
+    '// These won't happen if a config file already exists
+    If Config.ReferencesCount = 0 Then
+
+        '// Generate module base bath
+        Config.ModuleBasePath = "src"
+        Config.TestBasePath = "test"
+        
+    End If
+
     '// Generate entries for modules not yet listed
     For Each comModule In prjActProj.VBComponents
         boolCreateNewEntry = _
@@ -180,7 +190,7 @@ Public Sub Export(Optional RemoveFromProject As Boolean = True)
             Set comModule = prjActProj.VBComponents(strModuleName)
             EnsurePath Config.ModuleFullPath(strModuleName)
             comModule.Export Config.ModuleFullPath(strModuleName)
-            
+
             If RemoveFromProject Then
                 If comModule.Type = vbext_ct_Document Then
                     comModule.CodeModule.DeleteLines 1, comModule.CodeModule.CountOfLines
