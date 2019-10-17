@@ -227,7 +227,7 @@ End Sub
 '//   project.
 '// * The project name is set to the project name specified by the configuration
 '//   file.
-Public Sub Import()
+Public Sub Import(Optional wb As Workbook)
 
     Dim prjActProj          As VBProject
     Dim Config              As clsConfiguration
@@ -235,8 +235,13 @@ Public Sub Import()
     Dim varModuleName       As Variant
     
     On Error GoTo catchError
-
-    Set prjActProj = Application.VBE.ActiveVBProject
+    
+    If wb Is Nothing Then
+        Set prjActProj = Application.VBE.ActiveVBProject
+    Else
+        Set prjActProj = wb.VBProject
+    End If
+    
     If prjActProj Is Nothing Then GoTo exitSub
 
     Set Config = New clsConfiguration
