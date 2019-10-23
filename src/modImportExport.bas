@@ -155,7 +155,7 @@ End Sub
 '// * code modules which were exported are deleted or cleared.
 '// * References loaded in the Project which are listed in the configuration
 '//   file is deleted.
-Public Sub Export(Optional RemoveFromProject As Boolean = True)
+Public Sub Export(Optional RemoveFromProject As Boolean = True, Optional ExportToFile = True, Optional wb As Workbook)
 
     Dim prjActProj          As VBProject
     Dim Config              As clsConfiguration
@@ -163,10 +163,14 @@ Public Sub Export(Optional RemoveFromProject As Boolean = True)
     Dim lngIndex            As Long
     Dim strModuleName       As String
     Dim varModuleName       As Variant
-    
+
     On Error GoTo ErrHandler
 
-    Set prjActProj = Application.VBE.ActiveVBProject
+    If wb Is Nothing Then
+        Set wb = ActiveWorkbook
+    End If
+
+    Set prjActProj = wb.VBProject
     If prjActProj Is Nothing Then GoTo exitSub
 
     Set Config = New clsConfiguration
@@ -179,9 +183,9 @@ Public Sub Export(Optional RemoveFromProject As Boolean = True)
         If CollectionKeyExists(prjActProj.VBComponents, strModuleName) Then
             Set comModule = prjActProj.VBComponents(strModuleName)
             ModuleHandler.EnsurePath Config.ModuleFullPath(strModuleName)
-                
-            comModule.Export Config.ModuleFullPath(strModuleName)
-            
+
+            If ExportToFile Then comModule.Export Config.ModuleFullPath(strModuleName)
+
             If RemoveFromProject Then
                 If comModule.Type = vbext_ct_Document Then
                     comModule.CodeModule.DeleteLines 1, comModule.CodeModule.CountOfLines
@@ -219,6 +223,17 @@ Public Sub Save()
     Export False
 End Sub
 
+'// Removes code modules from workbook
+'// without saving them to the repository
+Public Sub Clean()
+    If MsgBox("Are you Sure you want to remove these without saving?" & _
+    vbCrLf & "Any unsaved changes cannot be recovered", _
+    vbCritical + vbYesNo, _
+    "Remove Modules?") = vbYes Then
+        Export False, False
+    End If
+End Sub
+
 '// Imports textual data from the file system such as VBA code to build the
 '// current active VBProject as specified in it's configuration file.
 '// * Each code module file listed in the configuration file is imported into
@@ -233,15 +248,15 @@ Public Sub Import(Optional wb As Workbook)
     Dim Config              As clsConfiguration
     Dim strModuleName       As String
     Dim varModuleName       As Variant
-    
+
     On Error GoTo catchError
-    
+
     If wb Is Nothing Then
-        Set prjActProj = Application.VBE.ActiveVBProject
-    Else
-        Set prjActProj = wb.VBProject
+        Set wb = ActiveWorkbook
     End If
-    
+
+    Set prjActProj = wb.VBProject
+
     If prjActProj Is Nothing Then GoTo exitSub
 
     Set Config = New clsConfiguration

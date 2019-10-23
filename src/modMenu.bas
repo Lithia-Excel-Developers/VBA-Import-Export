@@ -52,6 +52,11 @@ Private Sub CreateVBEVCSMenu()
         MenuEvents objMenuItem
         objMenuItem.Caption = "&Save"
 
+        Set objMenuItem = .Controls.Add(Type:=msoControlButton)
+        objMenuItem.OnAction = "Clean"
+        MenuEvents objMenuItem
+        objMenuItem.Caption = "&Clean"
+
     End With
 
 End Sub
